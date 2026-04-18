@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Outer circle background -->
+  <circle cx="50" cy="50" r="48" fill="#A8E4B9" />
+  
+  <!-- The inner ring -->
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#2D5A4C" stroke-width="2" />
+  
+  <!-- Satellites / Dots on the ring -->
+  <circle cx="28" cy="28" r="5" fill="#2D5A4C" />
+  <circle cx="72" cy="72" r="5" fill="#2D5A4C" />
+  
+  <!-- Center Sprout / Wheat Icon -->
+  <path d="M50 30 Q40 30 40 40 Q40 50 50 50 Q60 50 60 40 Q60 30 50 30 Z" fill="#2D5A4C" />
+  <path d="M48 45 L48 65 L52 65 L52 45 Z" fill="#2D5A4C" />
+  
+  <path d="M38 45 Q30 45 30 55 Q30 65 38 65 Q46 65 46 55 Q46 45 38 45 Z" fill="#2D5A4C" />
+  <path d="M62 45 Q70 45 70 55 Q70 65 62 65 Q54 65 54 55 Q54 45 62 45 Z" fill="#2D5A4C" />
+</svg>
