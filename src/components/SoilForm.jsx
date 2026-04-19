@@ -6,6 +6,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useLanguage } from '../utils/LanguageContext';
 
 // Fix typical Leaflet icon issue in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -25,6 +26,7 @@ export default function SoilForm({
   isLoading,
   locationLoading,
 }) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     nitrogen: '',
     phosphorus: '',
@@ -85,7 +87,7 @@ export default function SoilForm({
           boxShadow: '0 4px 6px rgba(0,0,0,0.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold'
         }}
       >
-        {isMapExpanded ? <><FiMinimize size={18} /> Close Map</> : <><FiMaximize size={18} /> Expand</>}
+        {isMapExpanded ? <><FiMinimize size={18} /> {t('closeMap')}</> : <><FiMaximize size={18} /> {t('expand')}</>}
       </button>
       <MapContainer 
          center={[manualPosition.lat, manualPosition.lng]} 
@@ -206,9 +208,9 @@ export default function SoilForm({
   return (
     <div className="soil-form-card">
       <div className="soil-form-header">
-        <h2 className="soil-form-title">Soil Analysis Data</h2>
+        <h2 className="soil-form-title">{t('soilAnalysisData')}</h2>
         <p className="soil-form-desc">
-          Upload your card to auto-extract values or enter them manually.
+          {t('uploadCardContent')}
         </p>
       </div>
 
@@ -233,33 +235,33 @@ export default function SoilForm({
           
           {isExtracting ? (
              <div className="pdf-upload-text">
-               <span className="pdf-upload-label" style={{color: 'var(--color-primary)'}}>Extracting data with AI...</span>
+               <span className="pdf-upload-label" style={{color: 'var(--color-primary)'}}>{t('extractingData')}</span>
                <span className="spinner" style={{borderColor: 'var(--color-primary)', borderTopColor: 'transparent', margin: '4px auto'}}></span>
              </div>
           ) : pdfFile ? (
             <div className="pdf-upload-file-info">
               <span className="pdf-upload-filename">{pdfFile.name}</span>
               <span className="pdf-upload-filesize">
-                {(pdfFile.size / 1024).toFixed(1)} KB — Data extracted!
+                {(pdfFile.size / 1024).toFixed(1)} KB — {t('dataExtracted')}
               </span>
             </div>
           ) : (
             <div className="pdf-upload-text">
-              <span className="pdf-upload-label">Upload Soil Health Card (PDF)</span>
-              <span className="pdf-upload-hint">Drag and drop to autofill inputs</span>
+               <span className="pdf-upload-label">{t('uploadPdfHint')}</span>
+               <span className="pdf-upload-hint">{t('dragDropHint')}</span>
             </div>
           )}
         </div>
         
         <a href="https://www.soilhealth.dac.gov.in/home" target="_blank" rel="noopener noreferrer" className="soil-card-link">
-          <FiExternalLink /> Don't have a Soil Health Card? Get it here.
+          <FiExternalLink /> {t('noSoilCard')}
         </a>
 
         <div className="soil-form-grid" style={{marginTop: '1rem'}}>
           <div className="form-group form-group--full-width">
             <label className="form-label">
               <span className="form-label-icon-text" style={{background: 'var(--color-accent)'}}>🎯</span>
-              Target Verification (Optional)
+              {t('targetVerification')}
             </label>
             <select
               name="targetCrop"
@@ -267,20 +269,20 @@ export default function SoilForm({
               onChange={handleChange}
               className="form-input form-select"
             >
-              <option value="auto">Auto-Recommend Best Crops</option>
-              <option value="wheat">Wheat</option>
-              <option value="rice">Rice</option>
-              <option value="maize">Maize (Corn)</option>
-              <option value="cotton">Cotton</option>
-              <option value="soybean">Soybean</option>
-              <option value="sugarcane">Sugarcane</option>
+              <option value="auto">{t('autoRecommendBest')}</option>
+              <option value="wheat">{t('wheat')}</option>
+              <option value="rice">{t('rice')}</option>
+              <option value="maize">{t('maize')}</option>
+              <option value="cotton">{t('cotton')}</option>
+              <option value="soybean">{t('soybean')}</option>
+              <option value="sugarcane">{t('sugarcane')}</option>
             </select>
           </div>
 
           <div className="form-group">
             <label className="form-label">
               <GiChemicalDrop className="form-label-icon" />
-              pH Level
+              {t('phLevel')}
             </label>
             <input
               type="number"
@@ -299,7 +301,7 @@ export default function SoilForm({
           <div className="form-group">
             <label className="form-label">
               <span className="form-label-icon-text">N</span>
-              Nitrogen (N)
+              {t('nitrogen')}
             </label>
             <input
               type="number"
@@ -316,7 +318,7 @@ export default function SoilForm({
           <div className="form-group">
             <label className="form-label">
               <span className="form-label-icon-text">P</span>
-              Phosphorus (P)
+              {t('phosphorus')}
             </label>
             <input
               type="number"
@@ -333,7 +335,7 @@ export default function SoilForm({
           <div className="form-group">
             <label className="form-label">
               <span className="form-label-icon-text">K</span>
-              Potassium (K)
+              {t('potassium')}
             </label>
             <input
               type="number"
@@ -356,14 +358,14 @@ export default function SoilForm({
                 className={`location-toggle-btn ${locationMode === 'auto' ? 'active' : ''}`}
                 onClick={() => setLocationMode('auto')}
               >
-                Auto GPS
+                {t('autoGps')}
               </button>
               <button 
                 type="button"
                 className={`location-toggle-btn ${locationMode === 'manual' ? 'active' : ''}`}
                 onClick={() => setLocationMode('manual')}
               >
-                Manual Geofence
+                {t('manualGeofence')}
               </button>
            </div>
            
@@ -373,7 +375,7 @@ export default function SoilForm({
                  {isMapExpanded ? createPortal(mapContent, document.body) : mapContent}
                </div>
                <div className="form-group">
-                 <label className="form-label">Farm Boundary Radius: {farmRadius}km</label>
+                 <label className="form-label">{t('farmBoundaryRadius')}: {farmRadius}km</label>
                  <input 
                     type="range" 
                     min="1" max="50" 
@@ -381,7 +383,7 @@ export default function SoilForm({
                     onChange={(e) => setFarmRadius(e.target.value)}
                     className="radius-slider"
                  />
-                 <span className="form-label" style={{textTransform: 'none', marginTop: '4px', opacity: 0.7}}>Click on the map to set farm location exactly.</span>
+                 <span className="form-label" style={{textTransform: 'none', marginTop: '4px', opacity: 0.7}}>{t('clickMapHint')}</span>
                </div>
              </div>
            ) : (
@@ -389,7 +391,7 @@ export default function SoilForm({
               <FiNavigation size={16} className="location-icon" />
               {locationLoading ? (
                 <span className="location-text location-text--loading">
-                  Detecting location...
+                  {t('detectingLocation')}
                 </span>
               ) : location ? (
                 <span className="location-text">
@@ -397,7 +399,7 @@ export default function SoilForm({
                 </span>
               ) : (
                 <span className="location-text location-text--error">
-                  Location unavailable (Auto failing over to IP)
+                  {t('locationUnavailable')}
                 </span>
               )}
 
@@ -420,10 +422,10 @@ export default function SoilForm({
           {isLoading ? (
             <span className="submit-loading">
               <span className="spinner"></span>
-              {isLoading === true ? "Generating Recommendations..." : isLoading}
+              {isLoading === true ? t('generatingRecs') : isLoading}
             </span>
           ) : (
-            'Generate Recommendations'
+            t('generateRecsBtn')
           )}
         </button>
       </form>

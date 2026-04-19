@@ -1,153 +1,16 @@
-# 🌾 Agri AI App
+# React + Vite
 
-Intelligent crop yield prediction platform powered by real-time weather data and soil analysis.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Tech Stack
+Currently, two official plugins are available:
 
-- **Frontend**: React (Vite)
-- **Backend**: Supabase (Auth, Database, Storage)
-- **Weather API**: AccuWeather
-- **Language**: JavaScript
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
----
+## React Compiler
 
-## Setup Instructions
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### 1. Clone & Install
+## Expanding the ESLint configuration
 
-```bash
-cd agri-ai-app/frontend
-npm install
-```
-
-### 2. Configure Environment
-
-Edit the `.env` file in the `agri-ai-app/` root directory:
-
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_ACCUWEATHER_API_KEY=your_accuweather_key
-```
-
-### 3. Setup Supabase
-
-#### Create `soil_reports` Table
-
-Run this SQL in your Supabase SQL Editor (`https://supabase.com/dashboard/project/YOUR_PROJECT_ID/sql`):
-
-```sql
--- Create the soil_reports table
-CREATE TABLE IF NOT EXISTS soil_reports (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  created_at TIMESTAMPTZ DEFAULT now(),
-  nitrogen FLOAT NOT NULL,
-  phosphorus FLOAT NOT NULL,
-  potassium FLOAT NOT NULL,
-  ph FLOAT NOT NULL,
-  temperature FLOAT,
-  humidity FLOAT,
-  rainfall FLOAT,
-  latitude FLOAT,
-  longitude FLOAT,
-  prediction FLOAT,
-  file_url TEXT
-);
-
--- Enable Row Level Security
-ALTER TABLE soil_reports ENABLE ROW LEVEL SECURITY;
-
--- Allow authenticated users to insert their own reports
-CREATE POLICY "Allow authenticated inserts"
-  ON soil_reports
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (true);
-
--- Allow authenticated users to read all reports
-CREATE POLICY "Allow authenticated reads"
-  ON soil_reports
-  FOR SELECT
-  TO authenticated
-  USING (true);
-```
-
-#### Create `soil-pdfs` Storage Bucket
-
-Run this SQL in your Supabase SQL Editor:
-
-```sql
--- Create the storage bucket
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('soil-pdfs', 'soil-pdfs', true)
-ON CONFLICT (id) DO NOTHING;
-
--- Allow authenticated users to upload files
-CREATE POLICY "Allow authenticated uploads"
-  ON storage.objects
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (bucket_id = 'soil-pdfs');
-
--- Allow public access to read files
-CREATE POLICY "Allow public reads"
-  ON storage.objects
-  FOR SELECT
-  TO public
-  USING (bucket_id = 'soil-pdfs');
-```
-
-### 4. Run the App
-
-```bash
-cd frontend
-npm run dev
-```
-
-Open `http://localhost:5173` in your browser.
-
----
-
-## Features
-
-- 🔐 **Authentication** — Signup/Login via Supabase Auth
-- 🧪 **Soil Analysis** — Input Nitrogen, Phosphorus, Potassium, pH
-- 📍 **Auto Location** — Browser Geolocation API
-- 🌦 **Live Weather** — AccuWeather API integration
-- 📄 **PDF Upload** — Store soil health cards in Supabase Storage
-- 🧠 **Yield Prediction** — Formula-based crop yield forecasting
-- 📊 **Dashboard** — Premium split-layout with prediction cards
-
----
-
-## Project Structure
-
-```
-agri-ai-app/
-├── frontend/
-│   └── src/
-│       ├── components/
-│       │   ├── Navbar.js
-│       │   ├── SoilForm.js
-│       │   ├── PredictionCard.js
-│       │   └── WeatherCard.js
-│       ├── pages/
-│       │   ├── Login.js
-│       │   ├── Signup.js
-│       │   └── Dashboard.js
-│       ├── services/
-│       │   ├── supabaseClient.js
-│       │   ├── weatherService.js
-│       │   └── locationService.js
-│       ├── utils/
-│       │   └── prediction.js
-│       ├── App.js
-│       └── index.css
-├── backend/
-│   ├── model/
-│   │   └── crop_model.py
-│   └── api/
-│       └── predict.py
-├── .env
-└── README.md
-```
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

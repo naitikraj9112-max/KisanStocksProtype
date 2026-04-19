@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signUp } from '../services/supabaseClient';
-import { PiPlantFill } from 'react-icons/pi';
 import { FiMail, FiLock, FiArrowRight, FiUserPlus } from 'react-icons/fi';
+import { useLanguage } from '../utils/LanguageContext';
+import Footer from '../components/Footer';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,11 +55,11 @@ export default function Signup() {
             <div className="auth-logo-icon" style={{ background: 'transparent', boxShadow: 'none' }}>
               <img src="/kisanstocks-logo.svg" alt="KS" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }} />
             </div>
-            <h1 className="auth-brand">KisanStocks</h1>
+            <h1 className="auth-brand">{t('appName')}</h1>
           </div>
 
-          <h2 className="auth-title">Create account</h2>
-          <p className="auth-subtitle">Start predicting crop yields today</p>
+          <h2 className="auth-title">{t('createAccount')}</h2>
+          <p className="auth-subtitle">{t('joinKisanStocks')}</p>
 
           {error && (
             <div className="auth-error">
@@ -73,7 +75,7 @@ export default function Signup() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field">
-              <label className="auth-label">Email Address</label>
+              <label className="auth-label">{t('emailAddress')}</label>
               <div className="auth-input-wrapper">
                 <FiMail className="auth-input-icon" size={16} />
                 <input
@@ -88,7 +90,7 @@ export default function Signup() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label">Password</label>
+              <label className="auth-label">{t('password')}</label>
               <div className="auth-input-wrapper">
                 <FiLock className="auth-input-icon" size={16} />
                 <input
@@ -123,24 +125,25 @@ export default function Signup() {
               {loading ? (
                 <span className="submit-loading">
                   <span className="spinner"></span>
-                  Creating account...
+                  {t('signingUp')}
                 </span>
               ) : (
                 <>
-                  <FiUserPlus size={16} /> Create Account
+                  <FiUserPlus size={16} /> {t('createAccount')}
                 </>
               )}
             </button>
           </form>
 
           <p className="auth-switch">
-            Already have an account?{' '}
+            {t('alreadyHaveAccount')}{' '}
             <Link to="/login" className="auth-switch-link">
-              Sign in
+              {t('signInHere')}
             </Link>
           </p>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

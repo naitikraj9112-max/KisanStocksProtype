@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signIn } from '../services/supabaseClient';
-import { PiPlantFill } from 'react-icons/pi';
 import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+import { useLanguage } from '../utils/LanguageContext';
+import Footer from '../components/Footer';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,11 +40,11 @@ export default function Login() {
             <div className="auth-logo-icon" style={{ background: 'transparent', boxShadow: 'none' }}>
               <img src="/kisanstocks-logo.svg" alt="KS" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }} />
             </div>
-            <h1 className="auth-brand">KisanStocks</h1>
+            <h1 className="auth-brand">{t('appName')}</h1>
           </div>
 
-          <h2 className="auth-title">Welcome back</h2>
-          <p className="auth-subtitle">Sign in to access your dashboard</p>
+          <h2 className="auth-title">{t('welcomeBack')}</h2>
+          <p className="auth-subtitle">{t('signInToAccess')}</p>
 
           {error && (
             <div className="auth-error">
@@ -52,7 +54,7 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field">
-              <label className="auth-label">Email Address</label>
+              <label className="auth-label">{t('emailAddress')}</label>
               <div className="auth-input-wrapper">
                 <FiMail className="auth-input-icon" size={16} />
                 <input
@@ -67,7 +69,7 @@ export default function Login() {
             </div>
 
             <div className="auth-field">
-              <label className="auth-label">Password</label>
+              <label className="auth-label">{t('password')}</label>
               <div className="auth-input-wrapper">
                 <FiLock className="auth-input-icon" size={16} />
                 <input
@@ -86,24 +88,25 @@ export default function Login() {
               {loading ? (
                 <span className="submit-loading">
                   <span className="spinner"></span>
-                  Signing in...
+                  {t('signingIn')}
                 </span>
               ) : (
                 <>
-                  Sign In <FiArrowRight size={16} />
+                  {t('signIn')} <FiArrowRight size={16} />
                 </>
               )}
             </button>
           </form>
 
           <p className="auth-switch">
-            Don't have an account?{' '}
+            {t('noAccount')}{' '}
             <Link to="/signup" className="auth-switch-link">
-              Create one
+              {t('createOne')}
             </Link>
           </p>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

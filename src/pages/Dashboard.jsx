@@ -8,6 +8,10 @@ import Navbar from '../components/Navbar';
 import SoilForm from '../components/SoilForm';
 import PredictionCard from '../components/PredictionCard';
 import WeatherCard from '../components/WeatherCard';
+import VoiceAssistant from '../components/VoiceAssistant';
+import GeminiChat from '../components/GeminiChat';
+import Footer from '../components/Footer';
+import { useLanguage } from '../utils/LanguageContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -24,6 +28,7 @@ export default function Dashboard() {
   
   const [locationMode, setLocationMode] = useState('auto'); // 'auto' | 'manual'
   const [manualLocationInput, setManualLocationInput] = useState('');
+  const { t } = useLanguage();
 
   // Auth guard + auto-detect location & weather on mount
   useEffect(() => {
@@ -86,12 +91,12 @@ export default function Dashboard() {
       let activeLocation = location;
 
       // Suspenseful 5-second processing sequence
-      setLoadingPhase("Analyzing Soil Chemistry...");
+      setLoadingPhase(t('analyzingSoil'));
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Handle manual location vs auto
       if (manualLocationMode && manualLat && manualLng) {
-        setLoadingPhase("Establishing Geofence & Querying Weather...");
+        setLoadingPhase(t('establishingGeofence'));
         setWeatherLoading(true);
         // Map exact pinned lat/lng
         const mockManualPos = { latitude: manualLat, longitude: manualLng };
@@ -107,14 +112,14 @@ export default function Dashboard() {
         await new Promise(resolve => setTimeout(resolve, 1500));
         setWeatherLoading(false);
       } else {
-        setLoadingPhase("Verifying Environmental Data...");
+        setLoadingPhase(t('verifyingEnvData'));
         await new Promise(resolve => setTimeout(resolve, 1500));
       }
 
-      setLoadingPhase("Running Yield Variance Models...");
+      setLoadingPhase(t('runningYieldModels'));
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      setLoadingPhase("Finalizing AI Matrices...");
+      setLoadingPhase(t('finalizingAi'));
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Use weather data for prediction (fallback to 0 if unavailable)
@@ -155,11 +160,11 @@ export default function Dashboard() {
         });
       } catch (saveErr) {
         console.error('Save error:', saveErr);
-        setError('Data saved locally but failed to sync with database.');
+        setError(t('savingData'));
       }
     } catch (err) {
       console.error('Prediction error:', err);
-      setError('Failed to generate prediction. Please try again.');
+      setError(t('failedPrediction'));
     } finally {
       setIsLoading(false);
     }
@@ -170,6 +175,8 @@ export default function Dashboard() {
       <Navbar userEmail={user?.email} />
 
       <main className="dashboard-main">
+        <VoiceAssistant />
+        <GeminiChat />
         {error && (
           <div className="dashboard-error">
             <span>{error}</span>
@@ -200,6 +207,7 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
