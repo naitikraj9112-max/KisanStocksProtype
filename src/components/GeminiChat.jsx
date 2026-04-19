@@ -12,15 +12,24 @@ export default function GeminiChat() {
   const { lang } = useLanguage();
 
   const welcomeMessage = lang === 'hi' 
-    ? "नमस्ते! मैं किसानबॉट (जेमिनी AI) हूँ। खेती, मिट्टी या मौसम से जुड़ी कोई भी जानकारी पूछें।"
-    : "Hello! I am KisanBot (powered by Gemini AI). Ask me anything about farming, soil, or weather.";
+    ? "नमस्ते! मैं किसानबॉट (ओपनराउटर) हूँ। खेती, मिट्टी या मौसम से जुड़ी कोई भी जानकारी पूछें।"
+    : "Hello! I am KisanBot (powered by OpenRouter). Ask me anything about farming, soil, or weather.";
 
-  // Initialize with welcome message
+  // Initialize with welcome message and update it if language changes
   useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([{ role: 'assistant', text: welcomeMessage }]);
-    }
-  }, [lang, messages.length, welcomeMessage]);
+    setMessages(prev => {
+      if (prev.length === 0) {
+        return [{ role: 'assistant', text: welcomeMessage, isWelcome: true }];
+      }
+      // Only update the first message if it's our placeholder welcome message
+      if (prev[0].isWelcome) {
+        const newMsgs = [...prev];
+        newMsgs[0].text = welcomeMessage;
+        return newMsgs;
+      }
+      return prev;
+    });
+  }, [welcomeMessage]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,7 +77,7 @@ export default function GeminiChat() {
 
   const handleClear = () => {
     resetChat();
-    setMessages([{ role: 'assistant', text: welcomeMessage }]);
+    setMessages([{ role: 'assistant', text: welcomeMessage, isWelcome: true }]);
   };
 
   if (!isOpen) {
@@ -95,7 +104,7 @@ export default function GeminiChat() {
             <path d="m19 5-14 14"></path>
             <path d="M5 5l14 14"></path>
           </svg>
-          KisanBot (Gemini)
+          KisanBot (OpenRouter)
         </div>
         <div className="chat-actions">
           <button onClick={handleClear} className="chat-action-btn" title={lang === 'hi' ? 'चैट साफ़ करें' : 'Clear Chat'}>

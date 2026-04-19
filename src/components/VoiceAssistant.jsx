@@ -16,6 +16,9 @@ export default function VoiceAssistant() {
       window.speechSynthesis.cancel();
       setIsPlaying(false);
     } else {
+      // Clear any stuck speech in the queue
+      window.speechSynthesis.cancel();
+      
       const textToSpeak = scripts[lang] || scripts.en;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       // Ensure we set the lang attribute so the browser knows which text it is
@@ -37,10 +40,13 @@ export default function VoiceAssistant() {
       
       utterance.rate = 0.9;
       
+      utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
+      utterance.onerror = (e) => {
+        console.error("Speech Synthesis Error:", e);
+        setIsPlaying(false);
+      };
       
-      setIsPlaying(true);
       window.speechSynthesis.speak(utterance);
     }
   };

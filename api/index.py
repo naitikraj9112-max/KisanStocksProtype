@@ -19,8 +19,8 @@ from flask_cors import CORS
 import sys
 import os
 
-# Add parent directory to path for model import
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# Add current directory to path for model import
+sys.path.insert(0, os.path.dirname(__file__))
 from model.crop_model import predict_yield
 
 app = Flask(__name__)

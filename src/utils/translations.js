@@ -84,7 +84,7 @@ export const translations = {
     weatherDataAppear: 'Weather data will appear once location is detected.',
     
     // Footer
-    poweredByGemini: 'Powered by Gemini 2.0 Flash'
+    poweredByGemini: 'Powered by OpenRouter'
   },
   hi: {
     // Navbar
@@ -171,6 +171,6 @@ export const translations = {
     weatherDataAppear: 'स्थान का पता चलने पर मौसम डेटा दिखाई देगा।',
     
     // Footer
-    poweredByGemini: 'जेमिनी द्वारा संचालित (Powered by Gemini)'
+    poweredByGemini: 'ओपनराउटर द्वारा संचालित (Powered by OpenRouter)'
   }
 };
