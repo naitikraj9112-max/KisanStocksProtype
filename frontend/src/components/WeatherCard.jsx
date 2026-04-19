@@ -1,6 +1,8 @@
 import { FiThermometer, FiDroplet, FiCloudRain, FiMapPin } from 'react-icons/fi';
+import { useLanguage } from '../utils/LanguageContext';
 
 export default function WeatherCard({ weather, location, isLoading }) {
+  const { t } = useLanguage();
   if (isLoading) {
     return (
       <div className="weather-card weather-card--loading">
@@ -19,7 +21,7 @@ export default function WeatherCard({ weather, location, isLoading }) {
     return (
       <div className="weather-card weather-card--empty">
         <FiCloudRain size={32} className="weather-empty-icon" />
-        <p className="weather-empty-text">Weather data will appear once location is detected.</p>
+        <p className="weather-empty-text">{t('weatherDataAppear')}</p>
       </div>
     );
   }
@@ -28,7 +30,7 @@ export default function WeatherCard({ weather, location, isLoading }) {
     <div className="weather-card">
       <div className="weather-header">
         <div>
-          <h3 className="weather-title">Live Weather</h3>
+          <h3 className="weather-title">{t('liveWeather')}</h3>
           {weather.cityName && (
             <p className="weather-location">
               <FiMapPin size={12} />
@@ -45,7 +47,7 @@ export default function WeatherCard({ weather, location, isLoading }) {
             <FiThermometer size={20} />
           </div>
           <div className="weather-stat-info">
-            <span className="weather-stat-label">Temperature</span>
+            <span className="weather-stat-label">{t('weatherTemp')}</span>
             <span className="weather-stat-value">
               {weather.temperature}<span className="weather-stat-unit">°C</span>
             </span>
@@ -57,7 +59,7 @@ export default function WeatherCard({ weather, location, isLoading }) {
             <FiDroplet size={20} />
           </div>
           <div className="weather-stat-info">
-            <span className="weather-stat-label">Humidity</span>
+            <span className="weather-stat-label">{t('weatherHumidity')}</span>
             <span className="weather-stat-value">
               {weather.humidity}<span className="weather-stat-unit">%</span>
             </span>
@@ -69,7 +71,7 @@ export default function WeatherCard({ weather, location, isLoading }) {
             <FiCloudRain size={20} />
           </div>
           <div className="weather-stat-info">
-            <span className="weather-stat-label">Rainfall</span>
+            <span className="weather-stat-label">{t('weatherRainfall')}</span>
             <span className="weather-stat-value">
               {weather.rainfall}<span className="weather-stat-unit">mm</span>
             </span>

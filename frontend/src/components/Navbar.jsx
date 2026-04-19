@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { signOut } from '../services/supabaseClient';
 import { FiSearch, FiBell, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
 import { PiPlantFill } from 'react-icons/pi';
+import { useLanguage } from '../utils/LanguageContext';
 
 export default function Navbar({ userEmail }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { lang, setLang, t } = useLanguage();
 
   const handleSignOut = async () => {
     try {
@@ -15,6 +17,10 @@ export default function Navbar({ userEmail }) {
     } catch (err) {
       console.error('Sign out error:', err);
     }
+  };
+
+  const toggleLanguage = () => {
+    setLang(lang === 'en' ? 'hi' : 'en');
   };
 
   return (
@@ -33,7 +39,7 @@ export default function Navbar({ userEmail }) {
             <img src="/kisanstocks-logo.svg" alt="KS" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }} />
           </div>
           <div>
-            <span className="navbar-title" style={{fontSize: '1.4rem'}}>KisanStocks</span>
+            <span className="navbar-title" style={{fontSize: '1.4rem'}}>{t('appName')}</span>
           </div>
         </div>
       </div>
@@ -43,6 +49,13 @@ export default function Navbar({ userEmail }) {
       </div>
 
       <div className="navbar-right">
+        <button 
+          className="lang-toggle-btn" 
+          onClick={toggleLanguage}
+          title="Toggle Language / भाषा बदलें"
+        >
+          {lang === 'en' ? 'अ' : 'A'}
+        </button>
         <div className="navbar-user">
           <div className="navbar-avatar">
             {userEmail ? userEmail[0].toUpperCase() : 'U'}
@@ -52,10 +65,10 @@ export default function Navbar({ userEmail }) {
         <button
           className="navbar-signout-btn"
           onClick={handleSignOut}
-          title="Sign out"
+          title={t('signOut')}
         >
           <FiLogOut size={16} />
-          <span className="navbar-signout-text">Sign Out</span>
+          <span className="navbar-signout-text">{t('signOut')}</span>
         </button>
       </div>
     </nav>
