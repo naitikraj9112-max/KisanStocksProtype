@@ -46,9 +46,19 @@ export default function GeminiChat() {
       setMessages(prev => [...prev, { role: 'assistant', text: response }]);
     } catch (err) {
       console.error(err);
+      
+      let errorMsg = lang === 'hi' ? "क्षमा करें, मुझे इसका उत्तर देने में समस्या आ रही है।" : "Sorry, I am having trouble responding right now.";
+      
+      // If the error mentions API key or fetching, provide a helpful hint
+      if (err.message.includes("API key not valid") || err.message.includes("placeholder")) {
+        errorMsg += lang === 'hi' ? "\n\n(API Key अमान्य है। कृपया .env जांचें)" : "\n\n(API Key is invalid. Please check .env and restart server if needed.)";
+      } else if (err.message) {
+        errorMsg += `\n\n[Error: ${err.message}]`;
+      }
+
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        text: lang === 'hi' ? "क्षमा करें, मुझे इसका उत्तर देने में समस्या आ रही है।" : "Sorry, I am having trouble responding right now.",
+        text: errorMsg,
         isError: true 
       }]);
     } finally {

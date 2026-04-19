@@ -18,15 +18,21 @@ export default function VoiceAssistant() {
     } else {
       const textToSpeak = scripts[lang] || scripts.en;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      // Ensure we set the lang attribute so the browser knows which text it is
+      utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
       
-      // Try to select appropriate language voice
+      const voices = window.speechSynthesis.getVoices();
       if (lang === 'hi') {
-        utterance.lang = 'hi-IN';
-        const voices = window.speechSynthesis.getVoices();
-        const hindiVoice = voices.find(v => v.lang === 'hi-IN');
-        if (hindiVoice) utterance.voice = hindiVoice;
-      } else {
-        utterance.lang = 'en-US';
+        // Look for Hindi or Indian voices
+        const hindiVoice = voices.find(v => 
+          v.lang.includes('hi') || 
+          v.lang.includes('IN') || 
+          v.name.toLowerCase().includes('hindi') ||
+          v.name.toLowerCase().includes('india')
+        );
+        if (hindiVoice) {
+          utterance.voice = hindiVoice;
+        }
       }
       
       utterance.rate = 0.9;
@@ -39,8 +45,14 @@ export default function VoiceAssistant() {
     }
   };
 
-  // Clean up on unmount
+  // Clean up on unmount and eagerly fetch voices
   useEffect(() => {
+    // Eagerly fetch voices so they're ready when clicked
+    window.speechSynthesis.getVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
     return () => {
       window.speechSynthesis.cancel();
     };

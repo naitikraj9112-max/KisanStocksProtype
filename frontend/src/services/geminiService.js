@@ -1,7 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey);
+
+if (!apiKey) {
+  console.error("VITE_GEMINI_API_KEY is not defined in .env. Please define it and restart the server.");
+}
+
+const genAI = new GoogleGenerativeAI(apiKey || "placeholder-to-prevent-crash");
 
 // Using the flash model per instructions
 const model = genAI.getGenerativeModel({
@@ -23,7 +28,11 @@ export const sendMessage = async (prompt) => {
     return result.response.text();
   } catch (error) {
     console.error("Gemini API Error:", error);
-    throw new Error(error.message || "Failed to communicate with AI");
+    let errMsg = error.message || "Failed to communicate with AI";
+    if (errMsg.includes("API key not valid")) {
+      errMsg = "API Key is invalid. Please check your .env file.";
+    }
+    throw new Error(errMsg);
   }
 };
 
