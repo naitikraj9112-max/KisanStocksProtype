@@ -1,0 +1,16 @@
+# Exclude datasets from the build
+agri-ai-app/Datasets/
+agri-ai-app/api/model/train_on_real_data.py
+agri-ai-app/api/model/analyze_data.py
+agri-ai-app/api/model/test_integration.py
+agri-ai-app/api/model/train_model.py
+
+# Exclude frontend source if not needed by the API (Vercel usually handles this, but just in case)
+agri-ai-app/node_modules/
+agri-ai-app/src/
+agri-ai-app/public/
+
+# Exclude logs and local env
+*.log
+.env
+.env.*
