@@ -1,6 +1,5 @@
 import os
 import joblib
-import pandas as pd
 import numpy as np
 
 # Load model and encoders
@@ -36,39 +35,28 @@ def predict_yield(n, p, k, ph, temp, humidity, rainfall, crop='Rice', state='Ass
         rainfall_factor = rainfall * 0.2
         return round(soil_factor + temp_factor + humidity_factor + rainfall_factor, 1)
 
-    # Prepare input data
-    input_data = {
-        'crop': [crop],
-        'season': [season],
-        'state': [state],
-        'fertilizer': [fertilizer],
-        'pesticide': [pesticide],
-        'avg_temp_c': [temp],
-        'total_rainfall_mm': [rainfall],
-        'avg_humidity_percent': [humidity],
-        'N': [n],
-        'P': [p],
-        'K': [k],
-        'pH': [ph]
-    }
+    # Prepare input data as a 2D numpy array
+    # Order must match: crop, season, state, fertilizer, pesticide, temp, rainfall, humidity, N, P, K, ph
+    # Note: We need to ensure the order matches what was saved in feature_names.joblib
     
-    df = pd.DataFrame(input_data)
-    
-    # Encode categorical variables
     try:
-        for col in ['crop', 'season', 'state']:
-            if col in encoders:
-                # Handle unseen labels by defaulting to the first class if necessary
-                # But ideally the UI should provide valid choices
-                try:
-                    df[col] = encoders[col].transform(df[col])
-                except ValueError:
-                    df[col] = 0 # Default to first class
+        # Get encoded values
+        c_val = encoders['crop'].transform([crop])[0] if 'crop' in encoders else 0
+        s_val = encoders['season'].transform([season])[0] if 'season' in encoders else 0
+        st_val = encoders['state'].transform([state])[0] if 'state' in encoders else 0
         
-        # Ensure feature order matches training
-        df = df[feature_names]
+        # Build features in correct order
+        # features = ['crop', 'season', 'state', 'fertilizer', 'pesticide', 'avg_temp_c', 'total_rainfall_mm', 'avg_humidity_percent', 'N', 'P', 'K', 'pH']
+        input_row = [
+            c_val, s_val, st_val, 
+            float(fertilizer), float(pesticide), 
+            float(temp), float(rainfall), float(humidity),
+            float(n), float(p), float(k), float(ph)
+        ]
         
-        prediction = model.predict(df)[0]
+        input_array = np.array([input_row])
+        
+        prediction = model.predict(input_array)[0]
         return round(float(prediction), 2)
     except Exception as e:
         print(f"Error during prediction: {e}")
