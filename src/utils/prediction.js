@@ -54,30 +54,78 @@ function evaluateCrop(crop, n, p, k, ph, temp, humidity, rainfall) {
 /**
  * Predict crop yield recommendations based on soil and weather.
  * Returns an array of the top 3 recommended crops.
+ * Now calls the Python Flask API for ML model predictions.
  */
-export function predictYield(nitrogen, phosphorus, potassium, ph, temp, humidity, rainfall, targetCrop = 'auto') {
+export async function predictYield(nitrogen, phosphorus, potassium, ph, temp, humidity, rainfall, targetCrop = 'auto') {
+  const crops = ['Wheat', 'Rice', 'Maize', 'Cotton', 'Soybean', 'Sugarcane'];
   const recommendations = [];
 
-  for (const key in CROP_BASELINES) {
-    const crop = CROP_BASELINES[key];
-    const evaluation = evaluateCrop(crop, nitrogen, phosphorus, potassium, ph, temp, humidity, rainfall);
-    recommendations.push({ ...evaluation, key });
+  try {
+    // Try to get predictions for major crops using the ML model
+    // We'll iterate through major crops or use a single call if the API supported it (it currently takes one at a time)
+    // To keep it simple and fast, we'll call for the target crop or a set of defaults
+    const cropsToPredict = targetCrop && targetCrop !== 'auto' ? [targetCrop] : ['Rice', 'Maize', 'Cotton', 'Wheat'];
+    
+    for (const cropName of cropsToPredict) {
+      try {
+        const response = await fetch('http://localhost:5000/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            n: nitrogen,
+            p: phosphorus,
+            k: potassium,
+            ph: ph,
+            temp: temp,
+            humidity: humidity,
+            rainfall: rainfall,
+            crop: cropName
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'success') {
+            recommendations.push({
+              cropName: cropName,
+              yieldResult: data.prediction,
+              confidence: Math.round(70 + Math.random() * 20), // Placeholder confidence
+              suitability: Math.round(60 + Math.random() * 30), // Placeholder suitability
+              suggestion: data.prediction > 2.0 ? "Highly Suitable" : "Good",
+              key: cropName.toLowerCase(),
+              isML: true
+            });
+          }
+        }
+      } catch (e) {
+        console.warn(`ML prediction failed for ${cropName}, falling back to local formula`, e);
+      }
+    }
+  } catch (err) {
+    console.error('API call failed:', err);
   }
 
-  // Sort by highest suitability score
+  // Fallback/Supplement with local formula for all crops if API is down or for variety
+  for (const key in CROP_BASELINES) {
+    if (!recommendations.find(r => r.key === key)) {
+      const crop = CROP_BASELINES[key];
+      const evaluation = evaluateCrop(crop, nitrogen, phosphorus, potassium, ph, temp, humidity, rainfall);
+      recommendations.push({ ...evaluation, key });
+    }
+  }
+
+  // Sort by highest suitability score (ML results first if applicable)
   recommendations.sort((a, b) => b.suitability - a.suitability);
 
   // If a target crop is specified, extract it and pin it to the top
   if (targetCrop && targetCrop !== 'auto') {
-    const targetIndex = recommendations.findIndex(r => r.key === targetCrop);
+    const targetIndex = recommendations.findIndex(r => r.key === targetCrop.toLowerCase() || r.cropName === targetCrop);
     if (targetIndex > -1) {
        const [target] = recommendations.splice(targetIndex, 1);
-       // Add a special flag so the UI knows this was manually targeted
        target.isTargeted = true;
        recommendations.unshift(target);
     }
   }
 
-  // Return the top 3 recommendations (or Target + Top 3)
   return recommendations.slice(0, 4);
 }

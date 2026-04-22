@@ -128,7 +128,7 @@ export default function Dashboard() {
       const rainfall = activeWeather?.rainfall ?? 0;
 
       // Calculate new advanced prediction mapping
-      const predictionArray = predictYield(nitrogen, phosphorus, potassium, ph, temp, humidity, rainfall, targetCrop);
+      const predictionArray = await predictYield(nitrogen, phosphorus, potassium, ph, temp, humidity, rainfall, targetCrop);
       setPrediction(predictionArray); 
       setSoilData({ nitrogen, phosphorus, potassium, ph });
 
