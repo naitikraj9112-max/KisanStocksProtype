@@ -51,12 +51,19 @@ def predict():
             temp=float(data['temp']),
             humidity=float(data['humidity']),
             rainfall=float(data['rainfall']),
+            crop=data.get('crop', 'Rice'),
+            state=data.get('state', 'Assam'),
+            season=data.get('season', 'Kharif'),
+            fertilizer=float(data.get('fertilizer', 0)),
+            pesticide=float(data.get('pesticide', 0)),
         )
 
         return jsonify({
             'status': 'success',
             'prediction': result,
             'unit': 'Tons/Ha',
+            'crop': data.get('crop', 'Rice'),
+            'state': data.get('state', 'Assam'),
         })
 
     except ValueError as e:
